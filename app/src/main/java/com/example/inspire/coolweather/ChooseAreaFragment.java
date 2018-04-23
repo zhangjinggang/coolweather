@@ -3,6 +3,7 @@ package com.example.inspire.coolweather;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -188,7 +189,7 @@ public class ChooseAreaFragment extends Fragment {
                 datalist.add(county.getCountyName());
             }
             adapter.notifyDataSetChanged();
-            listView.setSelection(0);
+           // listView.setSelection(0);
             CurrentdLevel=LEVEL_COUNTY;
         }
         else{
@@ -233,6 +234,22 @@ public class ChooseAreaFragment extends Fragment {
                 else if(CurrentdLevel==LEVEL_CITY){
                     selectedCity=cityList.get(i);
                     queryCounty();
+                }
+                else if(CurrentdLevel==LEVEL_COUNTY){
+                    String weatherId=countyList.get(i).getWeatherId();
+                    if(getActivity()instanceof MainActivity){
+                        Intent intent=new Intent(getActivity(),WeatherActivity.class);
+                        intent.putExtra("weatherId",weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                    else if(getActivity()instanceof WeatherActivity){
+                        WeatherActivity weatherActivity=(WeatherActivity) getActivity();
+                        weatherActivity.drawerLayout.closeDrawers();
+                        weatherActivity.swipeRefreshLayout.setRefreshing(true);
+                        weatherActivity.requestWeather(weatherId);
+                    }
+
                 }
             }
         });
